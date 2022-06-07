@@ -10,6 +10,7 @@
                 <input v-model="form.title" id="Title"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     required>
+                <div v-if="errorMsg.bTitle" class="text-red-600 text-left">This field is required</div>
             </div>
             <div class="mb-6">
                 <label for="Description"
@@ -17,6 +18,7 @@
                 <textarea v-model="form.desc" id="Description"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     required></textarea>
+                <div v-if="errorMsg.bDesc" class="text-red-600 text-left">This field is required</div>
             </div>
             <button v-on:click="AddEditTodo($event)"
                 class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Save</button>
@@ -36,7 +38,11 @@ export default {
         }
 
         return {
-            form: val
+            form: val,
+            errorMsg: {
+                bTitle: false,
+                bDesc: false
+            }
         }
     },
     beforeMount() {
@@ -52,7 +58,7 @@ export default {
                 })
                 .then(data => {
                     const objResp = JSON.parse(data);
-                    console.log(objResp);
+                    
                     if (objResp['Status'] && objResp['Status'] == '200') {
                         this.$data.form.id = objResp['Data']['_id'];
                         this.$data.form.title = objResp['Data']['title'];
@@ -73,6 +79,16 @@ export default {
         AddEditTodo($event) {
             $event.preventDefault();
 
+            this.$data.errorMsg.bTitle = false;
+            this.$data.errorMsg.bDesc = false;
+
+            if (this.$data.form.title == '') {
+                this.$data.errorMsg.bTitle = true
+            }
+            if (this.$data.form.desc == '') {
+                this.$data.errorMsg.bDesc = true
+            }
+
             // Simple POST request with a JSON body using fetch
             const requestOptions = {
                 method: "POST",
@@ -83,7 +99,7 @@ export default {
                     description: this.$data.form.desc
                 })
             };
-            console.log(requestOptions, this.$data.id)
+            
             fetch("http://localhost:3000/Api/todo", requestOptions)
                 .then(response => {
                     return response.text();

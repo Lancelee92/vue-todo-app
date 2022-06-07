@@ -51,7 +51,7 @@ export default {
             })
             .then(data => {
                 const objResp = JSON.parse(data);
-                console.log(objResp);
+                
                 if (objResp['Status'] && objResp['Status'] == '200') {
                     this.$data.list = objResp['Data'];
                 }

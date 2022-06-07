@@ -52,8 +52,7 @@
 export default {
     name: 'Todo-Page',
     methods: {
-        Delete(id) {
-            console.log(id);
+        Delete(id) {            
 
             const requestOptions = {
                 method: "DELETE",
@@ -98,7 +97,7 @@ export default {
             })
             .then(data => {
                 const objResp = JSON.parse(data);
-                console.log(objResp);
+                
                 if (objResp['Status'] && objResp['Status'] == '200') {
                     this.$data.list = objResp['Data'];
                 }
